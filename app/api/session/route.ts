@@ -6,7 +6,7 @@ import { turso } from '@/lib/turso';
 // কোন ধাপে আটকাল বোঝার জন্য error এর কোড বা প্রথম অংশ (টোকেন বা key এতে থাকে না)
 const errCode = (e: unknown) => {
     const x = e as { code?: string; message?: string };
-    return String(x?.code || x?.message || 'unknown').slice(0, 120);
+    return String(x?.message || x?.code || 'unknown').slice(0, 120);
 };
 
 // লগইনের পরে ব্রাউজার Firebase এর টোকেন পাঠায়, সার্ভার ১৪ দিনের session cookie বসায় (.admcq.com, চার সাইটে)
