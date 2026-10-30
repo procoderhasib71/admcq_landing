@@ -4,12 +4,6 @@ import { adminAuth } from '@/lib/firebaseAdmin';
 export const SESSION_COOKIE = '__session';
 export const ROOT_DOMAIN = 'admcq.com';
 export const SESSION_DAYS = 14;
-export const PLATFORMS = [
-    { id: 'med', name: 'মেডিকেল ও ডেন্টাল', url: 'https://med.admcq.com' },
-    { id: 'ka', name: "ভার্সিটি 'ক' ইউনিট", url: 'https://ka.admcq.com' },
-    { id: 'kha', name: "ভার্সিটি 'খ' ইউনিট", url: 'https://kha.admcq.com' },
-    { id: 'eng', name: 'ইঞ্জিনিয়ারিং', url: 'https://eng.admcq.com' },
-] as const;
 
 export type SessionUser = { uid: string; email: string; name: string; phone: string };
 

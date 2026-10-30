@@ -5,11 +5,9 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AccountButton from './components/account-button';
 import { useTheme } from 'next-themes';
+import CourseIcon from './components/course-icon';
+import { ACCENT, COURSES } from '@/lib/courses';
 import {
-  Stethoscope,
-  Atom,
-  BookOpen,
-  Cpu,
   ArrowUpRight,
   CheckCircle2,
   Clock,
@@ -33,52 +31,14 @@ export default function HomePage() {
     setMounted(true);
   }, []);
 
-  const units = [
-    {
-      id: 'medical',
-      title: 'Medical & Dental',
-      subTitle: 'মেডিকেল ও ডেন্টাল',
-      icon: Stethoscope,
-      subdomain: 'https://med.admcq.com',
-      stats: '8.5k+ MCQs',
-      themeStyle: 'border-emerald-500/20 hover:border-emerald-500/60 bg-white dark:bg-[#0c1322] hover:shadow-emerald-500/10',
-      iconColor: 'text-emerald-500 dark:text-emerald-400 bg-emerald-500/10',
-      badgeBg: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
-    },
-    {
-      id: 'ka',
-      title: "Varsity 'Ka' Science",
-      subTitle: "ভার্সিটি 'ক' ইউনিট",
-      icon: Atom,
-      subdomain: 'https://ka.admcq.com',
-      stats: '12k+ MCQs',
-      themeStyle: 'border-blue-500/20 hover:border-blue-500/60 bg-white dark:bg-[#0c1322] hover:shadow-blue-500/10',
-      iconColor: 'text-blue-500 dark:text-blue-400 bg-blue-500/10',
-      badgeBg: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20'
-    },
-    {
-      id: 'kha',
-      title: "Varsity 'Kha' Arts",
-      subTitle: "ভার্সিটি 'খ' ইউনিট",
-      icon: BookOpen,
-      subdomain: 'https://kha.admcq.com',
-      stats: '10k+ MCQs',
-      themeStyle: 'border-amber-500/20 hover:border-amber-500/60 bg-white dark:bg-[#0c1322] hover:shadow-amber-500/10',
-      iconColor: 'text-amber-500 dark:text-amber-400 bg-amber-500/10',
-      badgeBg: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20'
-    },
-    {
-      id: 'eng',
-      title: 'Engineering Special',
-      subTitle: 'ইঞ্জিনিয়ারিং ইউনিট',
-      icon: Cpu,
-      subdomain: 'https://eng.admcq.com',
-      stats: '6.5k+ MCQs',
-      themeStyle: 'border-cyan-500/20 hover:border-cyan-500/60 bg-white dark:bg-[#0c1322] hover:shadow-cyan-500/10',
-      iconColor: 'text-cyan-500 dark:text-cyan-400 bg-cyan-500/10',
-      badgeBg: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20'
-    }
-  ];
+  // লগইন থাকলে কোন কোর্সগুলো নেওয়া, সেগুলোতে "পোর্টালে যান"; বাকিগুলোতে "কোর্স নিন"
+  const [enrolled, setEnrolled] = useState<string[]>([]);
+  useEffect(() => {
+    fetch('/api/profile', { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((d) => d.success && setEnrolled(d.platforms.filter((p: { enrolled: boolean }) => p.enrolled).map((p: { id: string }) => p.id)))
+      .catch(() => null);
+  }, []);
 
   const badges = [
     {
@@ -137,7 +97,7 @@ export default function HomePage() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-300">
-            <a href="#units" className="hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">Target Units</a>
+            <a href="#units" className="hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">Courses</a>
             <a href="#features" className="hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">Features</a>
             <a href="#about" className="hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">About Platform</a>
           </nav>
@@ -204,7 +164,7 @@ export default function HomePage() {
               href="#units"
               className="px-6 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 text-sm sm:text-base active:scale-95"
             >
-              <span>Select Your Target Unit</span>
+              <span>কোর্সগুলো দেখুন</span>
               <ChevronRight className="w-4 h-4" />
             </a>
             <a
@@ -221,50 +181,54 @@ export default function HomePage() {
       <section id="units" className="py-14 sm:py-20 max-w-5xl mx-auto px-4">
         <div className="text-center mb-8 sm:mb-12">
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2 text-slate-900 dark:text-white">
-            Choose Your Target Unit
+            আমাদের কোর্সসমূহ
           </h2>
           <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm max-w-md mx-auto">
-            নিজের ইউনিট সিলেক্ট করে সরাসরি লাইভ পোর্টালে যুক্ত হোন
+            প্রতিটা কোর্সে কী কী আছে দেখুন। যে কোর্স নেবেন, প্রোফাইলে শুধু সেটাই চালু থাকবে
           </p>
         </div>
 
-        {/* 2-Column Responsive Inline Card Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
-          {units.map((unit) => {
-            const Icon = unit.icon;
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {COURSES.map((c) => {
+            const a = ACCENT[c.accent];
+            const mine = enrolled.includes(c.id);
             return (
-              <a
-                key={unit.id}
-                href={unit.subdomain}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`group p-4 sm:p-5 rounded-2xl border transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-between active:scale-[0.98] ${unit.themeStyle}`}
+              <div
+                key={c.id}
+                className={`p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0c1322] transition-all duration-300 hover:shadow-xl flex flex-col ${a.ring}`}
               >
-                {/* Logo and Text (Inline) */}
-                <div className="flex items-center gap-3.5 min-w-0">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300 ${unit.iconColor}`}>
-                    <Icon className="w-6 h-6" />
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${a.icon}`}>
+                      <CourseIcon id={c.id} className="w-6 h-6" />
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="text-base font-bold text-slate-900 dark:text-white leading-tight">{c.name}</h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">{c.title}</p>
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight truncate">
-                      {unit.title}
-                    </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5 truncate">
-                      {unit.subTitle}
-                    </p>
-                  </div>
+                  <span className={`px-2.5 py-1 rounded-lg text-[11px] font-mono font-semibold shrink-0 ${a.icon}`}>{c.stats}</span>
                 </div>
 
-                {/* Badge and Enter Action */}
-                <div className="flex items-center gap-2.5 shrink-0 ml-3">
-                  <span className={`px-2.5 py-1 rounded-lg text-[11px] font-mono font-medium ${unit.badgeBg}`}>
-                    {unit.stats}
-                  </span>
-                  <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-black group-hover:bg-emerald-400 transition-all duration-300">
-                    <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                  </div>
-                </div>
-              </a>
+                <ul className="mt-4 space-y-2 flex-1">
+                  {c.includes.map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300">
+                      <CheckCircle2 className={`w-4 h-4 mt-0.5 shrink-0 ${a.dot}`} />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {mine ? (
+                  <a href={c.url} className="mt-5 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-bold transition-colors">
+                    পোর্টালে যান <ArrowUpRight className="w-4 h-4" />
+                  </a>
+                ) : (
+                  <Link href={`/profile?enroll=${c.id}`} className="mt-5 flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 text-slate-800 dark:text-slate-100 text-sm font-bold transition-colors">
+                    কোর্স নিন <ChevronRight className="w-4 h-4" />
+                  </Link>
+                )}
+              </div>
             );
           })}
         </div>
