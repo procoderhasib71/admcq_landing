@@ -6,11 +6,17 @@ import { turso } from '@/lib/turso';
 export async function GET(req: NextRequest) {
     const user = await sessionUser(req);
     if (!user) return fail('লগইন করুন', 401);
-    const [u, scores, bot] = await turso.batch([
-        { sql: 'SELECT name, email, phone, created_at FROM site_users WHERE uid = ?', args: [user.uid] },
-        { sql: 'SELECT platform, attempted, correct, score FROM site_scores WHERE uid = ?', args: [user.uid] },
-        { sql: "SELECT 1 FROM hermes_site_links WHERE site_uid = ? LIMIT 1", args: [user.uid] },
-    ], 'read');
+    let u, scores, bot;
+    try {
+        [u, scores, bot] = await turso.batch([
+            { sql: 'SELECT name, email, phone, created_at FROM site_users WHERE uid = ?', args: [user.uid] },
+            { sql: 'SELECT platform, attempted, correct, score FROM site_scores WHERE uid = ?', args: [user.uid] },
+            { sql: "SELECT 1 FROM hermes_site_links WHERE site_uid = ? LIMIT 1", args: [user.uid] },
+        ], 'read');
+    } catch (e) {
+        console.error('profile read failed', e);
+        return fail(`ডাটাবেস থেকে পড়া গেল না (${String((e as { code?: string })?.code || 'unknown')})`, 500);
+    }
     const row = u.rows[0] || {};
     const by = Object.fromEntries(scores.rows.map((s) => [String(s.platform), {
         attempted: Number(s.attempted) || 0, correct: Number(s.correct) || 0, score: Number(s.score) || 0 }]));

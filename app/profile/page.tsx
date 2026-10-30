@@ -33,12 +33,12 @@ export default function ProfilePage() {
                 window.location.href = '/login?next=/profile';
                 return;
             }
-            const d = await r.json();
+            const d = await r.json().catch(() => ({}));
             if (d.success) {
                 setProfile(d.profile);
                 setPlatforms(d.platforms);
                 setName(d.profile.name);
-            }
+            } else setMsg(d.error || `সার্ভার ${r.status}`);
             setLoading(false);
         }).catch(() => setLoading(false));
     }, []);
@@ -84,7 +84,7 @@ export default function ProfilePage() {
     };
 
     if (loading) return <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-[#070b14]"><Loader2 className="animate-spin text-emerald-500" /></div>;
-    if (!profile) return <div className="min-h-screen flex items-center justify-center text-sm">প্রোফাইল লোড করা যায়নি। <Link href="/login" className="text-emerald-600 ml-1">লগইন</Link></div>;
+    if (!profile) return <div className="min-h-screen flex items-center justify-center text-sm">প্রোফাইল লোড করা যায়নি{msg ? ` (${msg})` : ''}। <Link href="/login" className="text-emerald-600 ml-1">লগইন</Link></div>;
 
     const isPhoneAccount = Boolean(profile.phone);
 

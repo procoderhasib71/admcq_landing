@@ -114,8 +114,8 @@ function LoginInner() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ idToken: await user.getIdToken(true), name: displayName }),
         });
-        const data = await res.json();
-        if (!data.success) throw new Error(data.error || 'লগইন রাখা গেল না');
+        const data = await res.json().catch(() => ({}));
+        if (!data.success) throw new Error(data.error || `লগইন রাখা গেল না (সার্ভার ${res.status})`);
         window.location.href = safeNext(next);
     };
 
