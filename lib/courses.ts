@@ -1,4 +1,6 @@
-// চারটা কোর্স (প্রতিটার নিজের সাইট); landing এ শুধু দেখানো হয়, প্রোফাইলে যেগুলো নেওয়া সেগুলোই চালু
+// চারটা কোর্স; landing এ শুধু দেখানো হয়। লগইন, রেজিস্ট্রেশন, কোর্স নেওয়া সব ক্লাসরুমে
+export const CLASSROOM = 'https://app.admcq.com';
+
 export const COURSES = [
     {
         id: 'med',
@@ -39,7 +41,6 @@ export const COURSES = [
 ] as const;
 
 export type CourseId = (typeof COURSES)[number]['id'];
-export const isCourse = (id: unknown): id is CourseId => COURSES.some((c) => c.id === id);
 
 // Tailwind এর class গুলো পুরো লেখা থাকতে হয়, তাই রং অনুযায়ী আলাদা করে রাখা
 export const ACCENT = {

@@ -3,12 +3,10 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import AccountButton from './components/account-button';
 import { useTheme } from 'next-themes';
 import CourseIcon from './components/course-icon';
-import { ACCENT, COURSES } from '@/lib/courses';
+import { ACCENT, CLASSROOM, COURSES } from '@/lib/courses';
 import {
-  ArrowUpRight,
   CheckCircle2,
   Clock,
   BarChart3,
@@ -31,14 +29,6 @@ export default function HomePage() {
     setMounted(true);
   }, []);
 
-  // লগইন থাকলে কোন কোর্সগুলো নেওয়া, সেগুলোতে "পোর্টালে যান"; বাকিগুলোতে "কোর্স নিন"
-  const [enrolled, setEnrolled] = useState<string[]>([]);
-  useEffect(() => {
-    fetch('/api/profile', { cache: 'no-store' })
-      .then((r) => r.json())
-      .then((d) => d.success && setEnrolled(d.platforms.filter((p: { enrolled: boolean }) => p.enrolled).map((p: { id: string }) => p.id)))
-      .catch(() => null);
-  }, []);
 
   const badges = [
     {
@@ -119,7 +109,13 @@ export default function HomePage() {
               <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent animate-pulse" />
             )}
 
-            <AccountButton />
+            {/* লগইন, রেজিস্ট্রেশন আর প্রোফাইল সব ক্লাসরুমে (app.admcq.com) */}
+            <a
+              href={CLASSROOM}
+              className="px-4 py-2 sm:px-5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black text-xs sm:text-sm font-bold transition-all shadow-md shadow-emerald-500/20 shrink-0"
+            >
+              Join Now
+            </a>
           </div>
         </div>
       </header>
@@ -184,14 +180,13 @@ export default function HomePage() {
             আমাদের কোর্সসমূহ
           </h2>
           <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm max-w-md mx-auto">
-            প্রতিটা কোর্সে কী কী আছে দেখুন। যে কোর্স নেবেন, প্রোফাইলে শুধু সেটাই চালু থাকবে
+            প্রতিটা কোর্সে কী কী আছে দেখুন। Join Now দিয়ে রেজিস্ট্রেশন করে পছন্দের কোর্স নিন
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {COURSES.map((c) => {
             const a = ACCENT[c.accent];
-            const mine = enrolled.includes(c.id);
             return (
               <div
                 key={c.id}
@@ -219,15 +214,9 @@ export default function HomePage() {
                   ))}
                 </ul>
 
-                {mine ? (
-                  <a href={c.url} className="mt-5 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-bold transition-colors">
-                    পোর্টালে যান <ArrowUpRight className="w-4 h-4" />
-                  </a>
-                ) : (
-                  <Link href={`/profile?enroll=${c.id}`} className="mt-5 flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 text-slate-800 dark:text-slate-100 text-sm font-bold transition-colors">
-                    কোর্স নিন <ChevronRight className="w-4 h-4" />
-                  </Link>
-                )}
+                <a href={`${CLASSROOM}/profile?enroll=${c.id}`} className="mt-5 flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:bg-emerald-500 hover:text-black text-slate-800 dark:text-slate-100 text-sm font-bold transition-colors">
+                  কোর্স নিন <ChevronRight className="w-4 h-4" />
+                </a>
               </div>
             );
           })}
