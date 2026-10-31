@@ -111,7 +111,7 @@ export default function HomePage() {
 
             {/* লগইন, রেজিস্ট্রেশন আর প্রোফাইল সব ক্লাসরুমে (app.admcq.com) */}
             <a
-              href={CLASSROOM}
+              href={`${CLASSROOM}/login`}
               className="px-4 py-2 sm:px-5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black text-xs sm:text-sm font-bold transition-all shadow-md shadow-emerald-500/20 shrink-0"
             >
               Join Now
